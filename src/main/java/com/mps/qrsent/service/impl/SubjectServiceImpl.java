@@ -6,7 +6,9 @@ import com.mps.qrsent.repo.SubjectRepository;
 import com.mps.qrsent.service.SubjectService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class SubjectServiceImpl implements SubjectService {
     private final ModelMapper modelMapper;
     private final SubjectRepository subjectRepo;
