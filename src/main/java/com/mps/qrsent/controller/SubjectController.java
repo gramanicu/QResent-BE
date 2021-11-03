@@ -5,10 +5,7 @@ import com.mps.qrsent.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/subject")
@@ -16,8 +13,24 @@ public class SubjectController {
     @Autowired
     SubjectService subjectService;
 
+    @GetMapping("/get-subject/{subjectId}")
+    ResponseEntity<SubjectDto> getSubject(@PathVariable Long subjectId) {
+        return new ResponseEntity<>(subjectService.getSubject(subjectId), HttpStatus.OK);
+    }
+
     @PostMapping("/add-subject")
     ResponseEntity<SubjectDto> addSubject(@RequestBody SubjectDto request) {
         return new ResponseEntity<>(subjectService.addSubject(request), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update-subject/{subjectId}")
+    ResponseEntity<SubjectDto> updateSubject(@RequestBody SubjectDto request, @PathVariable Long subjectId) {
+        return new ResponseEntity<>(subjectService.updateSubject(request, subjectId), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete-subject/{subjectId}")
+    ResponseEntity deleteSubject(@PathVariable Long subjectId) {
+        subjectService.deleteSubject(subjectId);
+        return ResponseEntity.ok().build();
     }
 }
