@@ -1,6 +1,7 @@
 package com.mps.qrsent.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class HeadcountDto {
 
@@ -8,10 +9,9 @@ public class HeadcountDto {
     private String token;
     private LocalDateTime expiresAt;
     private MeetingDto meeting;
+    private List<VerifiedStudentDto> verifiedStudents;
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
     public void setId(Long id) {
         this.id = id;
@@ -40,4 +40,8 @@ public class HeadcountDto {
     public void setMeeting(MeetingDto meeting) {
         this.meeting = meeting;
     }
+
+    public List<VerifiedStudentDto> getVerifiedStudents() { return verifiedStudents; }
+
+    public void setVerifiedStudents(List<VerifiedStudentDto> verifiedStudents) { this.verifiedStudents = verifiedStudents; }
 }
