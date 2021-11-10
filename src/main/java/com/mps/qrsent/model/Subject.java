@@ -29,6 +29,18 @@ public class Subject {
     @OneToMany(mappedBy = "subject", orphanRemoval = true)
     private List<Meeting> meetings;
 
+    @ManyToOne
+    @JoinColumn(name = "professor_id")
+    private AppUser professor;
+
+    public AppUser getProfessor() {
+        return professor;
+    }
+
+    public void setProfessor(AppUser professor) {
+        this.professor = professor;
+    }
+
     public List<Meeting> getMeetings() {
         return meetings;
     }

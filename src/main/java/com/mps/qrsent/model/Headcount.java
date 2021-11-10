@@ -7,12 +7,9 @@ import java.util.List;
 @Table(name = "headcount")
 @Entity
 public class Headcount {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private Long id;
 
-    @Column(name = "token", nullable = false)
+    @Id
+    @Column(name = "token", nullable = false, unique = true)
     private String token;
 
     @Column(name = "expires_at", nullable = false)
@@ -51,13 +48,5 @@ public class Headcount {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }
