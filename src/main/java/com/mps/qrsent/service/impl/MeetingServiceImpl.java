@@ -2,7 +2,10 @@ package com.mps.qrsent.service.impl;
 
 
 import com.mps.qrsent.dto.MeetingDto;
+import com.mps.qrsent.dto.VerifiedStudentDto;
+import com.mps.qrsent.model.Headcount;
 import com.mps.qrsent.model.Meeting;
+import com.mps.qrsent.model.VerifiedStudent;
 import com.mps.qrsent.repo.MeetingRepository;
 import com.mps.qrsent.service.MeetingService;
 import com.mps.qrsent.util.CopyUtil;
@@ -12,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MeetingServiceImpl implements MeetingService {
@@ -60,5 +65,32 @@ public class MeetingServiceImpl implements MeetingService {
     public void deleteMeeting(Long meetingId) {
 
         meetingRepo.deleteById(meetingId);
+    }
+
+    @Override
+    public List<VerifiedStudent> getActiveStudents(Long meetingId) {
+        List<VerifiedStudent> activeStudents = new ArrayList<>();
+        Meeting meeting = meetingRepo.getById(meetingId);
+        if(meeting.getHeadcounts().isEmpty()) {
+            return new ArrayList<>();
+        }
+        Headcount headcountList1 = meeting.getHeadcounts().get(0);
+        if(meeting.getHeadcounts().size() == 1) {
+            return headcountList1.getVerifiedStudents();
+        }
+
+        for(VerifiedStudent verifiedStudent : headcountList1.getVerifiedStudents()) {
+            boolean isActive = true;
+            for(int i = 1; i < meeting.getHeadcounts().size(); i++) {
+                if(!meeting.getHeadcounts().get(i).getVerifiedStudents().contains(verifiedStudent)) {
+                    isActive = false;
+                    break;
+                }
+            }
+            if(isActive) {
+                activeStudents.add(verifiedStudent);
+            }
+        }
+        return activeStudents;
     }
 }
