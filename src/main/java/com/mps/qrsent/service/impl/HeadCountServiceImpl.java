@@ -1,29 +1,41 @@
 package com.mps.qrsent.service.impl;
 
+import com.mps.qrsent.dto.AppUserDto;
 import com.mps.qrsent.dto.HeadcountDto;
+import com.mps.qrsent.dto.ScanRequestDTO;
+import com.mps.qrsent.dto.VerifiedStudentDto;
+import com.mps.qrsent.model.AppUser;
 import com.mps.qrsent.model.Headcount;
+import com.mps.qrsent.model.VerifiedStudent;
 import com.mps.qrsent.repo.HeadcountRepository;
+import com.mps.qrsent.repo.VerifiedStudentRepository;
 import com.mps.qrsent.service.HeadCountService;
 import com.mps.qrsent.util.CopyUtil;
+import com.mps.qrsent.util.UserUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 
 @Service
 public class HeadCountServiceImpl implements HeadCountService {
+
+    private final VerifiedStudentRepository verifiedStudentRepository;
+
     private final ModelMapper modelMapper;
     private final HeadcountRepository headcountRepo;
 
     @Autowired
-    HeadCountServiceImpl(HeadcountRepository headCountRepo) {
+    HeadCountServiceImpl(VerifiedStudentRepository verifiedStudentRepository, HeadcountRepository headCountRepo) {
+        this.verifiedStudentRepository = verifiedStudentRepository;
         this.modelMapper = new ModelMapper();
         this.headcountRepo = headCountRepo;
     }
 
     @Override
-    public HeadcountDto getHeadCount(Long headCountId) {
+    public HeadcountDto getHeadCount(String headCountId) {
         // Search for the headcount, throw exception if not found
         Headcount headcount = headcountRepo.findById(headCountId)
                 .orElseThrow(() -> new EntityNotFoundException("HeadCount does not exist"));
@@ -42,7 +54,7 @@ public class HeadCountServiceImpl implements HeadCountService {
     }
 
     @Override
-    public HeadcountDto updateHeadCount(HeadcountDto dto, Long headCountId) {
+    public HeadcountDto updateHeadCount(HeadcountDto dto, String headCountId) {
         // Get the current headcount
         HeadcountDto currentHeadCount = getHeadCount(headCountId);
         // Copy all non-null properties from request -> heacount
@@ -55,7 +67,18 @@ public class HeadCountServiceImpl implements HeadCountService {
     }
 
     @Override
-    public void deleteHeadCount(Long headCountId) {
+    public void deleteHeadCount(String headCountId) {
         headcountRepo.deleteById(headCountId);
+    }
+
+    @Override
+    public void scanQR(ScanRequestDTO scanRequestDTO) {
+        HeadcountDto headcount = getHeadCount(scanRequestDTO.getToken());
+        AppUser user = UserUtil.getCurrentUser();
+        VerifiedStudentDto verifiedStudentDto = new VerifiedStudentDto();
+        verifiedStudentDto.setHeadcount(headcount);
+        verifiedStudentDto.setAppUser(modelMapper.map(user, AppUserDto.class));
+        verifiedStudentDto.setVerifiedAt(LocalDateTime.now());
+        verifiedStudentRepository.save(modelMapper.map(verifiedStudentDto, VerifiedStudent.class));
     }
 }
