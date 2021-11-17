@@ -93,4 +93,25 @@ public class MeetingServiceImpl implements MeetingService {
         }
         return activeStudents;
     }
+
+    @Override
+    public List<VerifiedStudent> getPresentStudents(Long meetingId) {
+        List<VerifiedStudent> presentStudents = new ArrayList<>();
+        Meeting meeting = meetingRepo.getById(meetingId);
+        if(meeting.getHeadcounts().isEmpty()) {
+            return new ArrayList<>();
+        }
+        if(meeting.getHeadcounts().size() == 1) {
+            return meeting.getHeadcounts().get(0).getVerifiedStudents();
+        }
+        presentStudents = meeting.getHeadcounts().get(0).getVerifiedStudents();
+        for(Headcount headcount : meeting.getHeadcounts()) {
+            for(VerifiedStudent verifiedStudent : headcount.getVerifiedStudents()) {
+                if(!presentStudents.contains(verifiedStudent)) {
+                    presentStudents.add(verifiedStudent);
+                }
+            }
+        }
+        return presentStudents;
+    }
 }

@@ -13,4 +13,5 @@ public interface MeetingService {
     MeetingDto updateMeeting(MeetingDto dto, Long meetingId);
     void deleteMeeting(Long meetingId);
     List<VerifiedStudent> getActiveStudents(Long meetingId);
+    List<VerifiedStudent> getPresentStudents(Long meetingId);
 }

@@ -41,5 +41,10 @@ public class MeetingController {
     ResponseEntity<List<VerifiedStudent>> getActiveStudents(@PathVariable Long meetingId) {
         return new ResponseEntity<>(meetingService.getActiveStudents(meetingId), HttpStatus.OK);
     }
+
+    @GetMapping("/present-students/{meetingId}")
+    ResponseEntity<List<VerifiedStudent>> getPresentStudents(@PathVariable Long meetingId) {
+        return new ResponseEntity<>(meetingService.getPresentStudents(meetingId), HttpStatus.OK);
+    }
 }
 
