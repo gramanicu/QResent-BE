@@ -47,6 +47,9 @@ public class HeadCountServiceImpl implements HeadCountService {
     public HeadcountDto addHeadCount(HeadcountDto dto) {
         // Map from DTO -> Entity
         Headcount headcount = modelMapper.map(dto, Headcount.class);
+
+        headcount.setExpiresAt(LocalDateTime.now().plusMinutes(15));
+
         // Save the entity
         headcount = headcountRepo.save(headcount);
         // Map from Entity -> DTO
@@ -79,6 +82,9 @@ public class HeadCountServiceImpl implements HeadCountService {
         verifiedStudentDto.setHeadcount(headcount);
         verifiedStudentDto.setAppUser(modelMapper.map(user, AppUserDto.class));
         verifiedStudentDto.setVerifiedAt(LocalDateTime.now());
+        if(verifiedStudentDto.getVerifiedAt().isAfter(headcount.getExpiresAt()))
+            throw new IllegalStateException("Expired code");
+
         verifiedStudentRepository.save(modelMapper.map(verifiedStudentDto, VerifiedStudent.class));
     }
 }
