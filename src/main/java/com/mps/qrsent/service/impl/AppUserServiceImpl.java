@@ -51,7 +51,7 @@ public class AppUserServiceImpl implements AppUserService {
         appUser.setPassword(passwordEncoder.encode(dto.getPassword()));
         appUser.setEnabled(true);
         // Save the entity
-        appUser = appUserRepo.save(appUser);
+        appUserRepo.saveAndFlush(appUser);
 
         // Authenticate and return the jwt
         LoginRequestDto loginRequest = new LoginRequestDto(dto.getUsername(), dto.getPassword());
