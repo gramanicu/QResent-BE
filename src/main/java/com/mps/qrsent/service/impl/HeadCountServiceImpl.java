@@ -87,8 +87,9 @@ public class HeadCountServiceImpl implements HeadCountService {
         verifiedStudentDto.setHeadcount(headcount);
         verifiedStudentDto.setAppUser(modelMapper.map(user, AppUserDto.class));
         verifiedStudentDto.setVerifiedAt(LocalDateTime.now());
-        if(verifiedStudentDto.getVerifiedAt().isAfter(headcount.getExpiresAt()))
+        if (verifiedStudentDto.getVerifiedAt().isAfter(headcount.getExpiresAt())) {
             throw new IllegalStateException("Expired code");
+        }
         verifiedStudentRepository.save(modelMapper.map(verifiedStudentDto, VerifiedStudent.class));
     }
 }

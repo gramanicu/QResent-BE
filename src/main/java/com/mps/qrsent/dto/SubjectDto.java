@@ -1,5 +1,6 @@
 package com.mps.qrsent.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mps.qrsent.util.SubjectType;
 import java.util.List;
 
@@ -10,6 +11,7 @@ public class SubjectDto {
     private SubjectType type;
     private String requirements;
     private String description;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<MeetingDto> meetings;
 
     public Long getId() {

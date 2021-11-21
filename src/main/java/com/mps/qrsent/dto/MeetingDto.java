@@ -1,5 +1,7 @@
 package com.mps.qrsent.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,6 +11,7 @@ public class MeetingDto {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private SubjectDto subject;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<HeadcountDto> headcounts;
 
     public Long getId() {

@@ -18,28 +18,28 @@ public class HeadCountController {
     @Autowired
     HeadCountService headCountService;
 
-    @GetMapping("/get-headcount/{headCountId}")
+    @GetMapping("/get/{headCountId}")
     ResponseEntity<HeadcountDto> getHeadCount(@PathVariable String headCountId) {
         return new ResponseEntity<>(headCountService.getHeadCount(headCountId), HttpStatus.OK);
     }
 
-    @PostMapping("/add-headcount")
+    @PostMapping("/add")
     ResponseEntity<HeadcountDto> addHeadCount(@RequestBody HeadcountDto request) {
         return new ResponseEntity<>(headCountService.addHeadCount(request), HttpStatus.CREATED);
     }
 
-    @PutMapping("/update-headcount/{headCountId}")
+    @PutMapping("/update/{headCountId}")
     ResponseEntity<HeadcountDto> updateHeadCount(@RequestBody HeadcountDto request, @PathVariable String headCountId) {
         return new ResponseEntity<>(headCountService.updateHeadCount(request, headCountId), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete-headcount/{headCountId}")
+    @DeleteMapping("/delete/{headCountId}")
     ResponseEntity deleteHeadCount(@PathVariable String headCountId) {
         headCountService.deleteHeadCount(headCountId);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/scanQRcode")
+    @PostMapping("/scan-qr")
     void scanQR(@RequestBody ScanRequestDTO scanRequestDTO) {
        headCountService.scanQR(scanRequestDTO);
         

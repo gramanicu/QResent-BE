@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MeetingServiceImpl implements MeetingService {
@@ -68,43 +69,57 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    public List<VerifiedStudent> getActiveStudents(Long meetingId) {
+    public List<VerifiedStudentDto> getActiveStudents(Long meetingId) {
+
         List<VerifiedStudent> activeStudents = new ArrayList<>();
         Meeting meeting = meetingRepo.getById(meetingId);
-        if(meeting.getHeadcounts().isEmpty()) {
+
+        if (meeting.getHeadcounts().isEmpty()) {
             return new ArrayList<>();
         }
-        Headcount headcountList1 = meeting.getHeadcounts().get(0);
+
+        Headcount firstHeadcount = meeting.getHeadcounts().get(0);
+
         if(meeting.getHeadcounts().size() == 1) {
-            return headcountList1.getVerifiedStudents();
+            return firstHeadcount.getVerifiedStudents().stream()
+                    .map(student -> modelMapper.map(student, VerifiedStudentDto.class))
+                    .collect(Collectors.toList());
         }
 
-        for(VerifiedStudent verifiedStudent : headcountList1.getVerifiedStudents()) {
+        for(VerifiedStudent verifiedStudent : firstHeadcount.getVerifiedStudents()) {
             boolean isActive = true;
-            for(int i = 1; i < meeting.getHeadcounts().size(); i++) {
-                if(!meeting.getHeadcounts().get(i).getVerifiedStudents().contains(verifiedStudent)) {
+            for(Headcount headcount : meeting.getHeadcounts()) {
+                if(!headcount.getVerifiedStudents().contains(verifiedStudent)) {
                     isActive = false;
                     break;
                 }
             }
-            if(isActive) {
+            if (isActive) {
                 activeStudents.add(verifiedStudent);
             }
         }
-        return activeStudents;
+        return activeStudents.stream()
+                .map(student -> modelMapper.map(student, VerifiedStudentDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<VerifiedStudent> getPresentStudents(Long meetingId) {
+    public List<VerifiedStudentDto> getPresentStudents(Long meetingId) {
         List<VerifiedStudent> presentStudents = new ArrayList<>();
         Meeting meeting = meetingRepo.getById(meetingId);
+
         if(meeting.getHeadcounts().isEmpty()) {
             return new ArrayList<>();
         }
+
         if(meeting.getHeadcounts().size() == 1) {
-            return meeting.getHeadcounts().get(0).getVerifiedStudents();
+            return meeting.getHeadcounts().get(0).getVerifiedStudents().stream()
+                    .map(student -> modelMapper.map(student, VerifiedStudentDto.class))
+                    .collect(Collectors.toList());
         }
+
         presentStudents = meeting.getHeadcounts().get(0).getVerifiedStudents();
+
         for(Headcount headcount : meeting.getHeadcounts()) {
             for(VerifiedStudent verifiedStudent : headcount.getVerifiedStudents()) {
                 if(!presentStudents.contains(verifiedStudent)) {
@@ -112,6 +127,8 @@ public class MeetingServiceImpl implements MeetingService {
                 }
             }
         }
-        return presentStudents;
+        return presentStudents.stream()
+                .map(student -> modelMapper.map(student, VerifiedStudentDto.class))
+                .collect(Collectors.toList());
     }
 }

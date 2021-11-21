@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 public class VerifiedStudentDto {
 
-
     private Long id;
     private HeadcountDto headcount;
     private AppUserDto appUser;

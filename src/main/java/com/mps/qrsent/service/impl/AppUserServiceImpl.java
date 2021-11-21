@@ -8,6 +8,7 @@ import com.mps.qrsent.security.JwtTokenProvider;
 import com.mps.qrsent.service.AppUserService;
 import com.mps.qrsent.util.CopyUtil;
 import com.mps.qrsent.util.JwtConstants;
+import com.mps.qrsent.util.UserUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,9 +42,14 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public void registerUser(AppUserDto dto) {
+        if (!UserUtil.isValidEmail(dto.getEmail())) {
+            throw new IllegalStateException("Invalid university email");
+        }
+
         // Map from DTO -> Entity
         AppUser appUser = modelMapper.map(dto, AppUser.class);
         appUser.setPassword(passwordEncoder.encode(dto.getPassword()));
+        appUser.setEnabled(true);
         // Save the entity
         appUserRepo.save(appUser);
     }

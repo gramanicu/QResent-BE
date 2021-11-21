@@ -13,22 +13,22 @@ public class VerifiedStudentController {
     @Autowired
     VerifiedStudentService verifiedStudentService;
 
-    @GetMapping("/get-verifiedStudent/{verifiedStudentId}")
+    @GetMapping("/get/{verifiedStudentId}")
     ResponseEntity<VerifiedStudentDto> getVerifiedStudent(@PathVariable Long verifiedStudentId) {
         return new ResponseEntity<>(verifiedStudentService.getVerifiedStudent(verifiedStudentId), HttpStatus.OK);
     }
 
-    @PostMapping("/add-verifiedStudent")
+    @PostMapping("/add")
     ResponseEntity<VerifiedStudentDto> addVerifiedStudent(@RequestBody VerifiedStudentDto request) {
         return new ResponseEntity<>(verifiedStudentService.addVerifiedStudent(request), HttpStatus.CREATED);
     }
 
-    @PutMapping("/update-verifiedStudent/{verifiedStudentId}")
+    @PutMapping("/update/{verifiedStudentId}")
     ResponseEntity<VerifiedStudentDto> updateVerifiedStudent(@RequestBody VerifiedStudentDto request, @PathVariable Long verifiedStudentId) {
         return new ResponseEntity<>(verifiedStudentService.updateVerifiedStudent(request, verifiedStudentId), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete-verifiedStudent/{verifiedStudentId}")
+    @DeleteMapping("/delete/{verifiedStudentId}")
     ResponseEntity deleteVerifiedStudent(@PathVariable Long verifiedStudentId) {
         verifiedStudentService.deleteVerifiedStudent(verifiedStudentId);
         return ResponseEntity.ok().build();
