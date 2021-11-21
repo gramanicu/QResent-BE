@@ -4,6 +4,8 @@ import com.mps.qrsent.dto.AppUserDto;
 import com.mps.qrsent.dto.LoginRequestDto;
 import com.mps.qrsent.model.AppUser;
 import com.mps.qrsent.service.AppUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,12 +25,14 @@ public class AppUserController {
     private ModelMapper mapper = new ModelMapper();
 
     @GetMapping("/get-user-details")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<AppUserDto> getCurrentUser() {
         return new ResponseEntity<>(mapper.map(appUserService.getCurrentUser(), AppUserDto.class), HttpStatus.OK);
     }
 
     @GetMapping("/get-all-users")
     @Secured("ROLE_ADMIN")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<List<AppUserDto>> getAllUsers() {
         return new ResponseEntity<>(appUserService.getAllUsers(), HttpStatus.OK);
     }
@@ -45,18 +49,21 @@ public class AppUserController {
     }
 
     @GetMapping("/refresh")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<String> refresh(@RequestHeader("Authorization") String token) {
         return new ResponseEntity<>(appUserService.refreshToken(token), HttpStatus.OK);
     }
 
     @PutMapping("/update-user/{appUserId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or principal.username == #username")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     void updateAppUser(@RequestBody AppUserDto request, @PathVariable String username) {
         appUserService.updateUser(request, username);
     }
 
     @DeleteMapping("/delete-user/{appUserId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or principal.username == #username")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     void deleteAppUser(@PathVariable String appUserId) {
         appUserService.deactivateUser(appUserId);
     }
