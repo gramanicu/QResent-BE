@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.util.List;
 
 public interface AppUserService extends UserDetailsService {
-    void registerUser(AppUserDto dto);
+    String registerUser(AppUserDto dto);
     void updateUser(AppUserDto dto, String username);
     void deactivateUser(String appUserId);
     AppUser getCurrentUser();

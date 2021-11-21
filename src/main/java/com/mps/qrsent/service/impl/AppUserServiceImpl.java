@@ -41,7 +41,7 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public void registerUser(AppUserDto dto) {
+    public String registerUser(AppUserDto dto) {
         if (!UserUtil.isValidEmail(dto.getEmail())) {
             throw new IllegalStateException("Invalid university email");
         }
@@ -51,7 +51,12 @@ public class AppUserServiceImpl implements AppUserService {
         appUser.setPassword(passwordEncoder.encode(dto.getPassword()));
         appUser.setEnabled(true);
         // Save the entity
-        appUserRepo.save(appUser);
+        appUser = appUserRepo.save(appUser);
+
+        // Authenticate and return the jwt
+        LoginRequestDto loginRequest = new LoginRequestDto(dto.getUsername(), dto.getPassword());
+
+        return authenticate(loginRequest);
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,13 +28,14 @@ public class AppUserController {
     }
 
     @GetMapping("/get-all-users")
+    @Secured("ROLE_ADMIN")
     ResponseEntity<List<AppUserDto>> getAllUsers() {
         return new ResponseEntity<>(appUserService.getAllUsers(), HttpStatus.OK);
     }
 
     @PostMapping("/register")
-    void register(@RequestBody AppUserDto request) {
-        appUserService.registerUser(request);
+    ResponseEntity<String> register(@RequestBody AppUserDto request) {
+        return new ResponseEntity<>(appUserService.registerUser(request), HttpStatus.OK);
     }
 
     @GetMapping("/login")
@@ -48,11 +50,13 @@ public class AppUserController {
     }
 
     @PutMapping("/update-user/{appUserId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or principal.username == #username")
     void updateAppUser(@RequestBody AppUserDto request, @PathVariable String username) {
         appUserService.updateUser(request, username);
     }
 
     @DeleteMapping("/delete-user/{appUserId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or principal.username == #username")
     void deleteAppUser(@PathVariable String appUserId) {
         appUserService.deactivateUser(appUserId);
     }
