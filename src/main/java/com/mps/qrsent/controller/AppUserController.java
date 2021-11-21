@@ -5,6 +5,7 @@ import com.mps.qrsent.dto.LoginRequestDto;
 import com.mps.qrsent.model.AppUser;
 import com.mps.qrsent.service.AppUserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class AppUserController {
 
     @GetMapping("/refresh")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    ResponseEntity<String> refresh(@RequestHeader("Authorization") String token) {
+    ResponseEntity<String> refresh(@Parameter(hidden = true) @RequestHeader("Authorization") String token) {
         return new ResponseEntity<>(appUserService.refreshToken(token), HttpStatus.OK);
     }
 
