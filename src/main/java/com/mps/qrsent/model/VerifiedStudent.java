@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class VerifiedStudent {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne(optional = false)

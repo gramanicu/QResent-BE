@@ -7,7 +7,6 @@ import java.util.List;
 @Table(name = "headcount")
 @Entity
 public class Headcount {
-
     @Id
     @Column(name = "token", nullable = false, unique = true)
     private String token;

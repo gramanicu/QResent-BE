@@ -1,61 +1,127 @@
 package com.mps.qrsent.service.impl;
 
 import com.mps.qrsent.dto.AppUserDto;
+import com.mps.qrsent.dto.LoginRequestDto;
 import com.mps.qrsent.model.AppUser;
 import com.mps.qrsent.repo.AppUserRepository;
+import com.mps.qrsent.security.JwtTokenProvider;
 import com.mps.qrsent.service.AppUserService;
 import com.mps.qrsent.util.CopyUtil;
+import com.mps.qrsent.util.JwtConstants;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AppUserServiceImpl implements AppUserService {
     private final ModelMapper modelMapper;
-    private final AppUserRepository appUserRepo;
-
     @Autowired
-    AppUserServiceImpl(AppUserRepository appUserRepo) {
-        this.modelMapper = new ModelMapper();
-        this.appUserRepo = appUserRepo;
+    private AppUserRepository appUserRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+
+    AppUserServiceImpl() {
+        modelMapper = new ModelMapper();
     }
 
     @Override
-    public AppUserDto getAppUser(Long appUserId) {
-        // Search for the AppUser, throw exception if not found
-        AppUser appUser = appUserRepo.findById(appUserId)
-                .orElseThrow(() -> new EntityNotFoundException("AppUser does not exist"));
-        // Map from Entity -> DTO
-        return modelMapper.map(appUser, AppUserDto.class);
-    }
-
-    @Override
-    public AppUserDto addAppUser(AppUserDto dto) {
+    public void registerUser(AppUserDto dto) {
         // Map from DTO -> Entity
         AppUser appUser = modelMapper.map(dto, AppUser.class);
+        appUser.setPassword(passwordEncoder.encode(dto.getPassword()));
         // Save the entity
-        appUser = appUserRepo.save(appUser);
-        // Map from Entity -> DTO
-        return modelMapper.map(appUser, AppUserDto.class);
+        appUserRepo.save(appUser);
     }
 
     @Override
-    public AppUserDto updateAppUser(AppUserDto dto, Long appUserId) {
+    public void updateUser(AppUserDto dto, String username) {
+        AppUser updateRequest = modelMapper.map(dto, AppUser.class);
         // Get the current appUser
-        AppUserDto currentAppUser = getAppUser(appUserId);
+        AppUser currentUser = (AppUser) loadUserByUsername(username);
         // Copy all non-null properties from request -> appUser
-        CopyUtil.copyNonNull(dto, currentAppUser);
-        // Map from DTO -> Entity and save the updated appUser
-        AppUser updatedAppUser = modelMapper.map(currentAppUser, AppUser.class);
-        updatedAppUser = appUserRepo.saveAndFlush(updatedAppUser);
-        // Map from Entity -> DTO
-        return modelMapper.map(updatedAppUser, AppUserDto.class);
+        CopyUtil.copyNonNull(updateRequest, currentUser);
+        if (currentUser.getPassword() != null) {
+            currentUser.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+        appUserRepo.save(currentUser);
     }
 
     @Override
-    public void deleteAppUser(Long appUserId) {
-        appUserRepo.deleteById(appUserId);
+    public void deactivateUser(String username) {
+        AppUser user = (AppUser) loadUserByUsername(username);
+        user.setEnabled(false);
+        appUserRepo.save(user);
+    }
+
+    @Override
+    public AppUser getCurrentUser() {
+        return (AppUser) loadUserByUsername(getCurrentUsername());
+    }
+
+    @Override
+    public List<AppUserDto> getAllUsers() {
+        List<AppUser> users = appUserRepo.findAllByEnabledTrue();
+        return users.stream()
+                .map(user -> modelMapper.map(user, AppUserDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getCurrentUsername() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        return username;
+    }
+
+    @Override
+    public String authenticate(LoginRequestDto dto) {
+        UserDetails user = loadUserByUsername(dto.getUsername());
+        if (!user.isEnabled()) {
+            throw new IllegalStateException("User disabled");
+        }
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword())
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = tokenProvider.generateToken(authentication);
+        return jwt;
+    }
+
+    @Override
+    public String refreshToken(String currentToken) {
+        currentToken = currentToken.replace(JwtConstants.TOKEN_PREFIX, "");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!tokenProvider.validateToken(currentToken, getCurrentUser())) {
+            throw new IllegalStateException("Invalid token");
+        }
+        return tokenProvider.generateToken(auth);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return appUserRepo.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

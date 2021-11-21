@@ -1,11 +1,20 @@
 package com.mps.qrsent.service;
 
 import com.mps.qrsent.dto.AppUserDto;
-import com.mps.qrsent.dto.HeadcountDto;
+import com.mps.qrsent.dto.LoginRequestDto;
+import com.mps.qrsent.model.AppUser;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface AppUserService {
-    AppUserDto getAppUser(Long appUsertId);
-    AppUserDto addAppUser(AppUserDto dto);
-    AppUserDto updateAppUser(AppUserDto dto, Long appUsertId);
-    void deleteAppUser(Long appUsertId);
+import java.util.List;
+
+public interface AppUserService extends UserDetailsService {
+    void registerUser(AppUserDto dto);
+    void updateUser(AppUserDto dto, String username);
+    void deactivateUser(String appUserId);
+    AppUser getCurrentUser();
+    List<AppUserDto> getAllUsers();
+    String getCurrentUsername();
+
+    String authenticate(LoginRequestDto dto);
+    String refreshToken(String currentToken);
 }
