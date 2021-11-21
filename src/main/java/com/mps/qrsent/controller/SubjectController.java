@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
@@ -31,21 +32,21 @@ public class SubjectController {
     }
 
     @PostMapping("/add")
-    @Secured({"ROLE_ADMIN, ROLE_TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_TEACHER"})
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<SubjectDto> addSubject(@RequestBody SubjectDto request) {
         return new ResponseEntity<>(subjectService.addSubject(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{subjectId}")
-    @Secured({"ROLE_ADMIN, ROLE_TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_TEACHER"})
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<SubjectDto> updateSubject(@RequestBody SubjectDto request, @PathVariable Long subjectId) {
         return new ResponseEntity<>(subjectService.updateSubject(request, subjectId), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{subjectId}")
-    @Secured({"ROLE_ADMIN, ROLE_TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_TEACHER"})
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity deleteSubject(@PathVariable Long subjectId) {
         subjectService.deleteSubject(subjectId);

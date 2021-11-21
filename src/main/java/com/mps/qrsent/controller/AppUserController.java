@@ -15,6 +15,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
@@ -32,7 +33,7 @@ public class AppUserController {
     }
 
     @GetMapping("/get-all-users")
-    @Secured("ROLE_ADMIN")
+    @RolesAllowed("ROLE_ADMIN")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<List<AppUserDto>> getAllUsers() {
         return new ResponseEntity<>(appUserService.getAllUsers(), HttpStatus.OK);
@@ -56,14 +57,14 @@ public class AppUserController {
     }
 
     @PutMapping("/update-user/{appUserId}")
-    @Secured("ROLE_ADMIN")
+    @RolesAllowed("ADMIN")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     void updateAppUser(@RequestBody AppUserDto request, @PathVariable String username) {
         appUserService.updateUser(request, username);
     }
 
     @DeleteMapping("/delete-user/{appUserId}")
-    @Secured("ROLE_ADMIN")
+    @RolesAllowed("ADMIN")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     void deleteAppUser(@PathVariable String appUserId) {
         appUserService.deactivateUser(appUserId);
