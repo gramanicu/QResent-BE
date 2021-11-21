@@ -24,28 +24,28 @@ public class HeadCountController {
     HeadCountService headCountService;
 
     @GetMapping("/get/{headCountId}")
-    @RolesAllowed({"ADMIN, TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN, ROLE_TEACHER"})
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<HeadcountDto> getHeadCount(@PathVariable String headCountId) {
         return new ResponseEntity<>(headCountService.getHeadCount(headCountId), HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    @RolesAllowed({"ADMIN, TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN, ROLE_TEACHER"})
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<HeadcountDto> addHeadCount(@RequestBody HeadcountDto request) {
         return new ResponseEntity<>(headCountService.addHeadCount(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{headCountId}")
-    @RolesAllowed({"ADMIN, TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN, ROLE_TEACHER"})
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<HeadcountDto> updateHeadCount(@RequestBody HeadcountDto request, @PathVariable String headCountId) {
         return new ResponseEntity<>(headCountService.updateHeadCount(request, headCountId), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{headCountId}")
-    @RolesAllowed({"ADMIN, TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN, ROLE_TEACHER"})
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity deleteHeadCount(@PathVariable String headCountId) {
         headCountService.deleteHeadCount(headCountId);
