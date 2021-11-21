@@ -66,8 +66,8 @@ public class AppUserController {
     @DeleteMapping("/delete-user/{appUserId}")
     @RolesAllowed("ROLE_ADMIN")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    void deleteAppUser(@PathVariable String appUserId) {
-        appUserService.deactivateUser(appUserId);
+    void deleteAppUser(@PathVariable String username) {
+        appUserService.deactivateUser(username);
     }
 
 
