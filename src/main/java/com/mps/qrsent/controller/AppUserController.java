@@ -56,14 +56,14 @@ public class AppUserController {
     }
 
     @PutMapping("/update-user/{appUserId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or principal.username == #username")
+    @Secured("ROLE_ADMIN")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     void updateAppUser(@RequestBody AppUserDto request, @PathVariable String username) {
         appUserService.updateUser(request, username);
     }
 
     @DeleteMapping("/delete-user/{appUserId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or principal.username == #username")
+    @Secured("ROLE_ADMIN")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     void deleteAppUser(@PathVariable String appUserId) {
         appUserService.deactivateUser(appUserId);

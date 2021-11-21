@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
@@ -20,6 +22,14 @@ public class SubjectServiceImpl implements SubjectService {
     SubjectServiceImpl(SubjectRepository subjectRepo) {
         this.modelMapper = new ModelMapper();
         this.subjectRepo = subjectRepo;
+    }
+
+    @Override
+    public List<SubjectDto> getAllSubjects() {
+        List<Subject> subjects = subjectRepo.findAll();
+        return subjects.stream()
+                .map(subject -> modelMapper.map(subject, SubjectDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
