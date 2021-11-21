@@ -63,10 +63,10 @@ public class AppUserController {
         appUserService.updateUser(request, username);
     }
 
-    @DeleteMapping("/delete-user/{appUserId}")
+    @DeleteMapping("/delete-user/")
     @RolesAllowed("ROLE_ADMIN")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    void deleteAppUser(@PathVariable String username) {
+    void deleteAppUser(@RequestParam String username) {
         appUserService.deactivateUser(username);
     }
 
