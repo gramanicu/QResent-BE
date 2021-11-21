@@ -16,7 +16,12 @@ import javax.sql.DataSource;
 
 @SpringBootApplication
 @OpenAPIDefinition(info = @Info(title = "QRsent", version = "1.0", description = "QRsent application"))
-@SecurityScheme(name = "qrsentapi", scheme = "bearer", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)
+@SecurityScheme(
+		name = "bearerAuth",
+		type = SecuritySchemeType.HTTP,
+		bearerFormat = "JWT",
+		scheme = "bearer"
+)
 public class QrsentApplication {
 
 	@Value("${spring.datasource.url}")
