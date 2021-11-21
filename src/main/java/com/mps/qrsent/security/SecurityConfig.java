@@ -52,6 +52,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/login").permitAll()
                 .antMatchers("/auth/register").permitAll()
                 .antMatchers("/h2-console").permitAll()
+                .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .antMatchers("/swagger-ui.html").permitAll()
+
                 .anyRequest().authenticated().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .addFilterBefore(authenticationFilterBean(), UsernamePasswordAuthenticationFilter.class)
