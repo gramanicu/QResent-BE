@@ -48,9 +48,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .cors().configurationSource(request -> {
                     var cors = new CorsConfiguration();
-                    cors.setAllowedOrigins(List.of("*"));
-                    cors.setAllowedMethods(List.of("*"));
-                    cors.setAllowedHeaders(List.of("*"));
+                    cors.setAllowedOrigin("*");
+                    cors.setAllowedMethod("*");
+                    cors.setAllowedHeader("*");
                     return cors;
                 }).and()
                 .csrf().disable()
