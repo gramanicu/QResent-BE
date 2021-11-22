@@ -46,7 +46,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().and()
+                .cors().configurationSource(request -> {
+                    var cors = new CorsConfiguration();
+                    cors.setAllowedOrigins(List.of("*"));
+                    cors.setAllowedMethods(List.of("*"));
+                    cors.setAllowedHeaders(List.of("*"));
+                    return cors;
+                }).and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/auth/login").permitAll()
