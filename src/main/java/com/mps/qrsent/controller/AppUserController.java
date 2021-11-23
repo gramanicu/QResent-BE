@@ -54,9 +54,9 @@ public class AppUserController {
         return new ResponseEntity<>(appUserService.refreshToken(token), HttpStatus.OK);
     }
 
-    @PutMapping("/update-user/{appUserId}")
+    @PutMapping("/update-user/")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    void updateAppUser(@RequestBody AppUserDto request, @PathVariable String username) {
+    void updateAppUser(@RequestBody AppUserDto request, @RequestParam String username) {
         appUserService.updateUser(request, username);
     }
 
