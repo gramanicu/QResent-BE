@@ -33,7 +33,6 @@ public class AppUserController {
     }
 
     @GetMapping("/get-all-users")
-    @RolesAllowed("ROLE_ADMIN")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<List<AppUserDto>> getAllUsers() {
         return new ResponseEntity<>(appUserService.getAllUsers(), HttpStatus.OK);
@@ -57,14 +56,12 @@ public class AppUserController {
     }
 
     @PutMapping("/update-user/{appUserId}")
-    @RolesAllowed("ROLE_ADMIN")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     void updateAppUser(@RequestBody AppUserDto request, @PathVariable String username) {
         appUserService.updateUser(request, username);
     }
 
     @DeleteMapping("/delete-user/")
-    @RolesAllowed("ROLE_ADMIN")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     void deleteAppUser(@RequestParam String username) {
         appUserService.deactivateUser(username);
