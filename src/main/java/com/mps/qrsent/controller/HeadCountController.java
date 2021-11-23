@@ -60,7 +60,7 @@ public class HeadCountController {
         
     }
 
-    @GetMapping("/get-students-by-headcountid/{heacCountId}")
+    @GetMapping("/get-students-by-headcountid/{headCountId}")
     @RolesAllowed({"ROLE_ADMIN, ROLE_TEACHER"})
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<List<VerifiedStudentDto>> getVerifiedStudentsByHeadCountId(@PathVariable String headCountId) {
