@@ -66,9 +66,6 @@ public class AppUserServiceImpl implements AppUserService {
         AppUser currentUser = (AppUser) loadUserByUsername(username);
         // Copy all non-null properties from request -> appUser
         CopyUtil.copyNonNull(updateRequest, currentUser);
-        if (currentUser.getPassword() != null) {
-            currentUser.setPassword(passwordEncoder.encode(dto.getPassword()));
-        }
         appUserRepo.save(currentUser);
     }
 
