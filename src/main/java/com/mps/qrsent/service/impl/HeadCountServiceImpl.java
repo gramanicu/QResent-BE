@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class HeadCountServiceImpl implements HeadCountService {
@@ -91,5 +93,11 @@ public class HeadCountServiceImpl implements HeadCountService {
             throw new IllegalStateException("Expired code");
         }
         verifiedStudentRepository.save(modelMapper.map(verifiedStudentDto, VerifiedStudent.class));
+    }
+
+    @Override
+    public List<VerifiedStudentDto> getStudentsByHeadCountId(String headCountId) {
+        HeadcountDto currentHeadCount = getHeadCount(headCountId);
+        return currentHeadCount.getVerifiedStudents().stream().map(student -> modelMapper.map(student, VerifiedStudentDto.class)).collect(Collectors.toList());
     }
 }

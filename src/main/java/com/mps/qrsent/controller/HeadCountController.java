@@ -16,6 +16,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.List;
 
 @RestController
 @RequestMapping("/headcount")
@@ -58,6 +59,14 @@ public class HeadCountController {
        headCountService.scanQR(scanRequestDTO);
         
     }
+
+    @GetMapping("/get-students-by-headcountid/{heacCountId}")
+    @RolesAllowed({"ROLE_ADMIN, ROLE_TEACHER"})
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    ResponseEntity<List<VerifiedStudentDto>> getVerifiedStudentsByHeadCountId(@PathVariable String headCountId) {
+        return new ResponseEntity<>(headCountService.getStudentsByHeadCountId(headCountId), HttpStatus.OK);
+    }
+
 
 
 }

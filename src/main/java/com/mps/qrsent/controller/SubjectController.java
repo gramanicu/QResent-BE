@@ -1,5 +1,6 @@
 package com.mps.qrsent.controller;
 
+import com.mps.qrsent.dto.MeetingDto;
 import com.mps.qrsent.dto.SubjectDto;
 import com.mps.qrsent.service.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,4 +53,12 @@ public class SubjectController {
         subjectService.deleteSubject(subjectId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/get-meetings-by-subjectid/{subjectId}")
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_TEACHER"})
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    ResponseEntity<List<MeetingDto>> getMeetingsBySubjectId(@PathVariable Long subjectId) {
+        return new ResponseEntity<>(subjectService.getAllMeetingsBySubjectId(subjectId), HttpStatus.OK);
+    }
+
 }

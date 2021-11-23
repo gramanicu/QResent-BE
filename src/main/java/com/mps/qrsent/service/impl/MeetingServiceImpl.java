@@ -1,6 +1,7 @@
 package com.mps.qrsent.service.impl;
 
 
+import com.mps.qrsent.dto.HeadcountDto;
 import com.mps.qrsent.dto.MeetingDto;
 import com.mps.qrsent.dto.VerifiedStudentDto;
 import com.mps.qrsent.model.Headcount;
@@ -130,5 +131,11 @@ public class MeetingServiceImpl implements MeetingService {
         return presentStudents.stream()
                 .map(student -> modelMapper.map(student, VerifiedStudentDto.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<HeadcountDto> getAllHeadcountsByMeetingId(Long meetingId) {
+        Meeting meeting = meetingRepo.getById(meetingId);
+        return meeting.getHeadcounts().stream().map(headcount -> modelMapper.map(headcount, HeadcountDto.class)).collect(Collectors.toList());
     }
 }

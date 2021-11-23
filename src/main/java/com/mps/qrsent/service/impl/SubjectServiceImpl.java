@@ -1,5 +1,6 @@
 package com.mps.qrsent.service.impl;
 
+import com.mps.qrsent.dto.MeetingDto;
 import com.mps.qrsent.dto.SubjectDto;
 import com.mps.qrsent.model.Subject;
 import com.mps.qrsent.repo.SubjectRepository;
@@ -67,5 +68,11 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public void deleteSubject(Long subjectId) {
         subjectRepo.deleteById(subjectId);
+    }
+
+    @Override
+    public List<MeetingDto> getAllMeetingsBySubjectId(Long subjectId) {
+        SubjectDto currentSubject = getSubject(subjectId);
+        return currentSubject.getMeetings().stream().map(meeting -> modelMapper.map(meeting, MeetingDto.class)).collect(Collectors.toList());
     }
 }

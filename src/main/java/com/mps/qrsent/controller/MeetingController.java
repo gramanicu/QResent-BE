@@ -1,5 +1,6 @@
 package com.mps.qrsent.controller;
 
+import com.mps.qrsent.dto.HeadcountDto;
 import com.mps.qrsent.dto.MeetingDto;
 import com.mps.qrsent.dto.VerifiedStudentDto;
 import com.mps.qrsent.model.VerifiedStudent;
@@ -63,5 +64,16 @@ public class MeetingController {
     ResponseEntity<List<VerifiedStudentDto>> getPresentStudents(@PathVariable Long meetingId) {
         return new ResponseEntity<>(meetingService.getPresentStudents(meetingId), HttpStatus.OK);
     }
+
+
+    @GetMapping("/get-all-headcounts/{meetingId}")
+    @RolesAllowed({"ROLE_ADMIN, ROLE_TEACHER"})
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+
+    ResponseEntity<List<HeadcountDto>> getAllHeadcountsByMeetingId(@PathVariable Long meetingId) {
+        return new ResponseEntity<>(meetingService.getAllHeadcountsByMeetingId(meetingId), HttpStatus.OK);
+    }
+
+
 }
 
