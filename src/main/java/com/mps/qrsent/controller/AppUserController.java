@@ -50,7 +50,6 @@ public class AppUserController {
     }
 
     @GetMapping("/refresh")
-    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<String> refresh(@Parameter(hidden = true) @RequestHeader("Authorization") String token) {
         return new ResponseEntity<>(appUserService.refreshToken(token), HttpStatus.OK);
     }
