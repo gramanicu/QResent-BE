@@ -33,21 +33,18 @@ public class SubjectController {
     }
 
     @PostMapping("/add")
-    @RolesAllowed({"ROLE_ADMIN", "ROLE_TEACHER"})
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<SubjectDto> addSubject(@RequestBody SubjectDto request) {
         return new ResponseEntity<>(subjectService.addSubject(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{subjectId}")
-    @RolesAllowed({"ROLE_ADMIN", "ROLE_TEACHER"})
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<SubjectDto> updateSubject(@RequestBody SubjectDto request, @PathVariable Long subjectId) {
         return new ResponseEntity<>(subjectService.updateSubject(request, subjectId), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{subjectId}")
-    @RolesAllowed({"ROLE_ADMIN", "ROLE_TEACHER"})
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity deleteSubject(@PathVariable Long subjectId) {
         subjectService.deleteSubject(subjectId);
@@ -55,7 +52,6 @@ public class SubjectController {
     }
 
     @GetMapping("/get-meetings-by-subjectid/{subjectId}")
-    @RolesAllowed({"ROLE_ADMIN", "ROLE_TEACHER"})
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     ResponseEntity<List<MeetingDto>> getMeetingsBySubjectId(@PathVariable Long subjectId) {
         return new ResponseEntity<>(subjectService.getAllMeetingsBySubjectId(subjectId), HttpStatus.OK);
